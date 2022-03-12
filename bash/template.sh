@@ -6,8 +6,6 @@ set -o nounset
 # debug
 # set -o xtrace
 
-set -eu -o pipefail
-
 # GLOBALS
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -45,9 +43,13 @@ while (($#)); do
             shift;
             break;
             ;;
-        * )
+        -* )
             warn "Unrecognized argument: $1"
             die "$(usage)"
+            ;;
+        *)
+            shift;
+            break;
             ;;
     esac
     shift
