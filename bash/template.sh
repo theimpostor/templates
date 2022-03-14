@@ -25,6 +25,9 @@ function warn() {
 
 function die() {
     warn "$@"
+    # dump a stack trace
+    local frame=0
+    while caller $frame; do ((frame++)); done
     exit 1
 }
 
@@ -68,6 +71,11 @@ if (return 0 2>/dev/null) ; then
 else
     echo Script is executed
 fi
+
+# # redirect output to file
+# exec > >(tee "${LOG}")
+# # tie stderr to stdout
+# exec 2>&1
 
 echo SCRIPT_DIR: "$SCRIPT_DIR"
 echo args: "$@"
