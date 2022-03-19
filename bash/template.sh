@@ -27,7 +27,10 @@ function die() {
     warn "$@"
     # dump a stack trace
     local frame=0
-    while caller $frame; do ((frame++)); done
+    while caller $frame; do
+        # prefix increment to prevent set -e from exiting when frame=0
+        ((++frame))
+    done
     exit 1
 }
 
