@@ -7,7 +7,7 @@ set -o nounset
 # set -o xtrace
 
 # GLOBALS
-readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"; readonly SCRIPT_DIR
 
 # FUNCTIONS
 function usage() {
