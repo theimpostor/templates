@@ -84,3 +84,5 @@ echo SCRIPT_DIR: "$SCRIPT_DIR"
 echo args: "$@"
 
 trap - EXIT
+
+# vim:ft=bash:sw=4:ts=4:expandtab
