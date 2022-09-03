@@ -26,12 +26,10 @@ function warn() {
 }
 
 function die() {
-    warn "$@"
-    warn "backtrace:"
     local frame=0
+    warn "$@"; warn "backtrace:"
     while caller $frame; do
-        # prefix increment to prevent set -e from exiting when frame=0
-        ((++frame))
+        ((++frame)) # prefix increment suppress errexit w/frame=0
     done
     exit 1
 }
@@ -49,8 +47,7 @@ while (($#)); do
             ;;
         *) break
             ;;
-    esac
-    shift
+    esac; shift
 done
 
 trap 'die "An error occured"' ERR
