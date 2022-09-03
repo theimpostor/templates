@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 
-set -o errexit
+set -o errexit -o errtrace
 set -o pipefail
 set -o nounset
-# debug
-# set -o xtrace
 
 # GLOBALS
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"; readonly SCRIPT_DIR
@@ -12,10 +10,14 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"; readonly SCRIPT_
 # FUNCTIONS
 function usage() {
     cat <<EOF
-Usage: $0 [options]
+Usage: $0 [options] [--] [args]
 options:
     --help, -h
         Print this message
+    --debug, -d
+        Enable debug tracing
+    --
+        Stop parsing options
 EOF
 }
 
@@ -25,7 +27,7 @@ function warn() {
 
 function die() {
     warn "$@"
-    # dump a stack trace
+    warn "backtrace:"
     local frame=0
     while caller $frame; do
         # prefix increment to prevent set -e from exiting when frame=0
@@ -34,34 +36,24 @@ function die() {
     exit 1
 }
 
-function exiterr {
-    die "An error occurred"
-}
-
 # MAIN
 while (($#)); do
     case $1 in
-        --help|-h)
-            usage
-            exit 0
+        --help|-h) usage; exit 0
             ;;
-        --)
-            shift;
-            break;
+        --debug|-d) set -o xtrace
             ;;
-        -* )
-            warn "Unrecognized argument: $1"
-            die "$(usage)"
+        --) shift; break
             ;;
-        *)
-            shift;
-            break;
+        -*) warn "Unrecognized argument: $1"; exit 1
+            ;;
+        *) break
             ;;
     esac
     shift
 done
 
-trap exiterr EXIT
+trap 'die "An error occured"' ERR
 
 if [ -t 1 ] ; then 
     echo Writing to terminal
@@ -82,7 +74,5 @@ fi
 
 echo SCRIPT_DIR: "$SCRIPT_DIR"
 echo args: "$@"
-
-trap - EXIT
 
 # vim:ft=bash:sw=4:ts=4:expandtab
