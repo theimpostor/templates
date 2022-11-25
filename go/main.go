@@ -49,7 +49,7 @@ func (s *stack) size() int {
 	return len(s.s)
 }
 
-func factorial(n int) int {
+func factorial(n int64) int {
 	return int(new(big.Int).MulRange(1, n).Int64())
 }
 
