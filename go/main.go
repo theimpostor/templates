@@ -100,7 +100,7 @@ func main() {
 	fmt.Println("hello world")
 }
 
-// hash a string of a-z chars to uint32
+// order-independent hash a string of a-z chars to uint32
 func hashLowercaseAlpha(s string) uint32 {
 	var mi uint32
 	m := make([]byte, 26)
