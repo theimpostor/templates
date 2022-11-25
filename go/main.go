@@ -2,33 +2,35 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"hash/fnv"
+	"math"
 	"math/big"
+	"math/bits"
+	"sort"
 )
 
 type stack struct {
-    s []int
+	s []int
 }
 
 func (s *stack) push(v int) {
-    s.s = append(s.s, v)
+	s.s = append(s.s, v)
 }
 
 func (s *stack) pop() int {
-    v := s.peek()
-    s.s = s.s[:len(s.s)-1]
-    return v
+	v := s.peek()
+	s.s = s.s[:len(s.s)-1]
+	return v
 }
 
 func (s *stack) peek() int {
-    return s.s[len(s.s)-1]
+	return s.s[len(s.s)-1]
 }
 
 func (s *stack) popFront() int {
-    v := s.front()
-    s.s = s.s[1:]
-    return v
+	v := s.front()
+	s.s = s.s[1:]
+	return v
 }
 
 func (s *stack) pushFront(v int) {
@@ -36,15 +38,15 @@ func (s *stack) pushFront(v int) {
 }
 
 func (s *stack) front() int {
-    return s.s[0]
+	return s.s[0]
 }
 
 func (s *stack) empty() bool {
-    return len(s.s) == 0
+	return len(s.s) == 0
 }
 
 func (s *stack) size() int {
-    return len(s.s)
+	return len(s.s)
 }
 
 func factorial(n int) int {
@@ -98,24 +100,23 @@ func main() {
 	fmt.Println("hello world")
 }
 
-
 // hash a string of a-z chars to uint32
 func hashLowercaseAlpha(s string) uint32 {
-    var mi uint32
-    m := make([]byte, 26)
+	var mi uint32
+	m := make([]byte, 26)
 
-    for i := range s {
-        c := uint64(s[i]-'a')
-        mi |= uint32(1 << c)
-        m[c]++
-    }
+	for i := range s {
+		c := uint64(s[i] - 'a')
+		mi |= uint32(1 << c)
+		m[c]++
+	}
 
-    h := fnv.New32a()
-    for mi > 0 {
+	h := fnv.New32a()
+	for mi > 0 {
 		// alternative implementations: https://stackoverflow.com/questions/757059/position-of-least-significant-bit-that-is-set
-        i := bits.TrailingZeros32(mi)
-        h.Write([]byte{byte(i),m[i]})
-        mi &= mi-1 // clear trailing bit
-    }
-    return h.Sum32()
+		i := bits.TrailingZeros32(mi)
+		h.Write([]byte{byte(i), m[i]})
+		mi &= mi - 1 // clear trailing bit
+	}
+	return h.Sum32()
 }
