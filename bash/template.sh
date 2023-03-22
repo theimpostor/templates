@@ -1,13 +1,22 @@
 #!/usr/bin/env bash
 
-set -o errexit -o errtrace
-set -o pipefail
-set -o nounset
+set -o errexit -o errtrace -o pipefail -o nounset
+function die() {
+    local frame=0
+    >&2 echo "died. backtrace:"
+    while caller $frame; do ((++frame)); done
+    exit 1
+}
+trap die ERR
 
 # GLOBALS
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"; readonly SCRIPT_DIR
 
 # FUNCTIONS
+function warn() {
+    >&2 echo "$@"
+}
+
 function usage() {
     cat <<EOF
 Usage: $0 [options] [--] [args]
@@ -19,19 +28,6 @@ options:
     --
         Stop parsing options
 EOF
-}
-
-function warn() {
-    >&2 echo "$@"
-}
-
-function die() {
-    local frame=0
-    warn "$@"; warn "backtrace:"
-    while caller $frame; do
-        ((++frame)) # prefix increment suppress errexit w/frame=0
-    done
-    exit 1
 }
 
 # MAIN
@@ -49,8 +45,6 @@ while (($#)); do
             ;;
     esac; shift
 done
-
-trap 'die "An error occured"' ERR
 
 if [ -t 1 ] ; then 
     echo Writing to terminal
