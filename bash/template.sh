@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 
 set -o errexit -o errtrace -o pipefail -o nounset
+function warn() {
+    >&2 echo "$@"
+}
+
 function die() {
-    local frame=0
-    >&2 echo "died. backtrace:"
-    while caller $frame; do ((++frame)); done
-    exit 1
+    local ec=$?; if (( ec == 0 )); then ec=1; fi
+    warn "$@"; warn "died. backtrace:"
+    local frame=0; while caller $frame; do ((++frame)); done
+    exit $ec
 }
 trap die ERR
 
@@ -13,10 +17,6 @@ trap die ERR
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"; readonly SCRIPT_DIR
 
 # FUNCTIONS
-function warn() {
-    >&2 echo "$@"
-}
-
 function usage() {
     cat <<EOF
 Usage: $0 [options] [--] [args]
