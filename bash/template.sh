@@ -6,8 +6,8 @@ function warn() {
 }
 
 function die() {
-    local ec=$?; if (( ec == 0 )); then ec=1; fi
-    warn "$@"; warn "died. backtrace:"
+    local ec=$?; if ((ec == 0)); then ec=1; fi
+    if (($#)); then warn -n "died: "; warn "$@"; else warn "died."; fi
     local frame=0; while caller $frame; do ((++frame)); done
     exit $ec
 }
